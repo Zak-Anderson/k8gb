@@ -1,0 +1,26 @@
+apiVersion: ohmyglb.absa.oss/v1beta1
+kind: Gslb
+metadata:
+  name: rbb-homeloans-nucleus-gateway-java8-glb
+  namespace: rbb-homeloans-nucleus-prod
+  annotations:
+    cert-manager.io/cluster-issuer: cluster-vault-issuer
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/client_body_timeout: 600s
+    nginx.ingress.kubernetes.io/proxy-body-size: 20m
+    nginx.ingress.kubernetes.io/send_timeout: 600s
+spec:
+  ingress:
+    rules:
+      - host: gateway.nucleus-dev.rbb-homeloans-prod.gslb.bcp.absa.co.za
+        http:
+          paths:
+            - backend:
+                serviceName: gateway-java8
+                servicePort: 80
+    tls:
+      - hosts:
+          - gateway.nucleus-dev.rbb-homeloans-prod.gslb.bcp.absa.co.za
+        secretName: rbb-homeloans-nucleus-gateway-java8-secret-tls
+  strategy:
+    type: roundRobin # Use a round robin load balancing strategy, when deciding which downstream clusters to route clients too
